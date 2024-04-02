@@ -1,0 +1,172 @@
+openapi: 3.0.3
+info:
+  description: A simple CRUD API for managing users with Keycloak authentication
+  title: User API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/api
+paths:
+  /users:
+    get:
+      operationId: listUsers
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/User'
+                type: array
+          description: A list of users
+      security:
+      - keycloak: []
+      summary: List all users
+      tags:
+      - Users
+      x-accepts: application/json
+      x-tags:
+      - tag: Users
+    post:
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: User created
+      security:
+      - keycloak: []
+      summary: Create a new user
+      tags:
+      - Users
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Users
+  /users/{userId}:
+    delete:
+      operationId: deleteUser
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: User deleted
+      security:
+      - keycloak: []
+      summary: Delete a user
+      tags:
+      - Users
+      x-accepts: application/json
+      x-tags:
+      - tag: Users
+    get:
+      operationId: getUserById
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: User found
+      security:
+      - keycloak: []
+      summary: Get a user by ID
+      tags:
+      - Users
+      x-accepts: application/json
+      x-tags:
+      - tag: Users
+    put:
+      operationId: updateUser
+      parameters:
+      - explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: User updated
+      security:
+      - keycloak: []
+      summary: Update a user
+      tags:
+      - Users
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: Users
+components:
+  schemas:
+    NewUser:
+      example:
+        email: email
+        username: username
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+      required:
+      - email
+      - username
+      type: object
+    User:
+      example:
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        email: email
+        username: username
+      properties:
+        id:
+          format: uuid
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+      required:
+      - email
+      - id
+      - username
+      type: object
+  securitySchemes:
+    keycloak:
+      flows:
+        authorizationCode:
+          authorizationUrl: http://your-keycloak-server/auth/realms/your-realm/protocol/openid-connect/auth
+          scopes: {}
+          tokenUrl: http://your-keycloak-server/auth/realms/your-realm/protocol/openid-connect/token
+      type: oauth2

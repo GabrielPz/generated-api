@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/SalesApi
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sales_comeia
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+  jackson:
+    date-format: org.openapitools.RFC3339DateFormat
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false

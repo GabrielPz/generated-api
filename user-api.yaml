@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: User API
+  description: A simple CRUD API for managing users with Keycloak authentication
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      security:
+        - keycloak: []
+    get:
+      summary: List all users
+      operationId: listUsers
+      tags:
+        - Users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      security:
+        - keycloak: []
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      security:
+        - keycloak: []
+    put:
+      summary: Update a user
+      operationId: updateUser
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      security:
+        - keycloak: []
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+      security:
+        - keycloak: []
+components:
+  schemas:
+    NewUser:
+      type: object
+      required:
+        - username
+        - email
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+  securitySchemes:
+    keycloak:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://your-keycloak-server/auth/realms/your-realm/protocol/openid-connect/auth
+          tokenUrl: http://your-keycloak-server/auth/realms/your-realm/protocol/openid-connect/token
+          scopes: {}
